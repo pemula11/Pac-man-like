@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -15,16 +16,22 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform _camera;
     [SerializeField] float _powerUpDuration = 5f;
 
-    private Coroutine powerUpCoroutine; 
+    [SerializeField] private int _health = 3;
+    [SerializeField] private TMP_Text _healthText;
+    [SerializeField] private Transform _respawnPoint;
+
+    private Coroutine powerUpCoroutine;
+    private bool _isPowerUpActive = false;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        UpdateUI();
     }
 
     void Start()
     {
-     
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -50,15 +57,33 @@ public class Player : MonoBehaviour
 
     private IEnumerator StartPowerUp()
     {
-        Debug.Log("start ffff");
+        _isPowerUpActive = true;
         OnPowerUpStart?.Invoke();
         yield return new WaitForSeconds(_powerUpDuration);
+        _isPowerUpActive = false;
         OnPowerUpEnd?.Invoke();
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_isPowerUpActive)
+        {
+            if (collision.gameObject.CompareTag("Enemy"))
+            {
+                collision.gameObject.GetComponent<Enemy>().Dead();
+            }
+        }
+    }
+
+    private void UpdateUI()
+    {
+        _healthText.text = "Health: " + _health;
     }
 
     public void pickPowerUp()
     {
-        Debug.Log("start powerupsssssssssssssssssssssssssss");
+
         if (powerUpCoroutine != null)
         {
             StopCoroutine(powerUpCoroutine);
@@ -67,4 +92,24 @@ public class Player : MonoBehaviour
         powerUpCoroutine = StartCoroutine(StartPowerUp());
 
     }
+
+    public void Dead()
+    {
+        _health--;
+       
+        if (_health <= 0)
+        {
+            _health = 0;
+            Debug.Log("Player is dead");
+        }
+        else
+        {
+            transform.position = _respawnPoint.position;
+        }
+        UpdateUI();
+
+       
+
+    }
+
 }

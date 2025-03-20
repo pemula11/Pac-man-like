@@ -23,16 +23,21 @@ public class Enemy : MonoBehaviour
     [HideInInspector]
     public NavMeshAgent navMeshAgent;
 
+    [HideInInspector]
+    public Animator animator;
+
     private void Awake()
     {
-
+        animator = GetComponent<Animator>();
         _currentState = patrolState;
         _currentState.EnterState(this);
         navMeshAgent = GetComponent<NavMeshAgent>();
+        
     }
 
     private void Start()
     {
+        
         if (player != null)
         {
             player.OnPowerUpEnd += stopRetreating;
@@ -61,13 +66,17 @@ public class Enemy : MonoBehaviour
 
     private void startRetreating()
     {
-        Debug.Log("4444444444Retreating");
         switchState(retreatState);
     }
 
     private void stopRetreating()
     {
         switchState(patrolState);
+    }
+
+    public void Dead()
+    {
+        Destroy(gameObject);
     }
 
     private void OnDestroy()
@@ -79,5 +88,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_currentState != retreatState)
+        {
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                if (player != null)
+                {
+                    player.Dead();
+                }
+            }
+        }
+
+    }
 
 }

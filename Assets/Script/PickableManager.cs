@@ -7,6 +7,7 @@ public class PickableManager : MonoBehaviour
 
     private List<Pickable> pickables = new List<Pickable>();
     [SerializeField] private Player player;
+    [SerializeField] ScoreManager scoreManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -25,6 +26,8 @@ public class PickableManager : MonoBehaviour
             pickables.Add(pickable);
         }
         Debug.Log("Pickable list initialized with " + pickables.Count + " pickables");
+
+        scoreManager.SetMaxScore(pickables.Count);
     }
 
     private void OnPickablePicked(Pickable pickable)
@@ -32,7 +35,7 @@ public class PickableManager : MonoBehaviour
         Debug.Log("Pickable left" + pickables.Count);
         if (pickable.pickableType == PickableType.PowerUp)
         {
-            Debug.Log("Player picked a power up");
+          
             player?.pickPowerUp();
         }
 
@@ -41,6 +44,6 @@ public class PickableManager : MonoBehaviour
         {
             Debug.Log("All pickables have been picked");
         }
-
+        scoreManager?.AddScore(1);
     }
 }
