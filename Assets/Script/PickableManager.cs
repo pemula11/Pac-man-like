@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PickableManager : MonoBehaviour
 {
@@ -42,7 +43,7 @@ public class PickableManager : MonoBehaviour
         pickables.Remove(pickable);
         if (pickables.Count <= 0)
         {
-            Debug.Log("All pickables have been picked");
+            SceneManager.LoadScene("WinScreen");
         }
         scoreManager?.AddScore(1);
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -100,7 +101,7 @@ public class Player : MonoBehaviour
         if (_health <= 0)
         {
             _health = 0;
-            Debug.Log("Player is dead");
+            SceneManager.LoadScene("LoseScreen");
         }
         else
         {
